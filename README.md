@@ -10,13 +10,13 @@ fs = FeatureSelector(data, target)
 fs.remove(methods = 'missing')
 
 # 一起使用
-fs.identify_all( 
-selection_params = {
-    'missing_threshold': 0.8,
-    'correlation_threshold': 0.98,
-    'task': 'classification',
-    'eval_metric': 'auc',
-    'cumulative_importance': 0.99
+fs.identify_all(
+    selection_params={
+        'missing_threshold': 0.8,
+        'correlation_threshold': 0.98,
+        'task': 'classification',
+        'eval_metric': 'auc',
+        'cumulative_importance': 0.99
     }
 )
 ```
