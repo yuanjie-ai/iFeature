@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+__title__ = 'setup'
+__author__ = 'JieYuan'
+__mtime__ = '2018/7/23'
+"""
 
 from setuptools import find_packages, setup
 
@@ -6,9 +11,9 @@ with open("README.md", encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='pyTool',
-    version='1.0.0',
-    url='https://github.com/Jie-Yuan',
+    name='ifeature',
+    version='0.0.1',
+    url='https://github.com/Jie-Yuan/iFeature',
     keywords=["DeepLearning", "313303303@qq.com"],
     description=('description'),
     long_description=long_description,
@@ -30,8 +35,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: Implementation',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
