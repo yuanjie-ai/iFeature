@@ -1,6 +1,6 @@
 import pandas as pd
 from tqdm import tqdm
-
+from sklearn.preprocessing import PolynomialFeatures
 
 class NumericalFeature(object):
 
@@ -8,11 +8,26 @@ class NumericalFeature(object):
         pass
 
     @staticmethod
-    def get_feats_desc(data, group='ID', feats=['feats', ]):
+    def get_feats_poly(data, feats=None, degree=2, return_df=True):
+        """PolynomialFeatures
+        :param data: np.array or pd.DataFrame
+        :param feats: columns names
+        :param degree:
+        :return: df
+        """
+        poly = PolynomialFeatures(degree, include_bias=False)
+        data = poly.fit_transform(data[feats])
+
+        if return_df:
+            data = pd.DataFrame(data, columns=poly.get_feature_names(feats))
+        return data
+
+    @staticmethod
+    def get_feats_desc(data, group='ID', feats=None):
         """data未聚合
         时间特征差分后当数值型特征
         """
-        print(f"There are {len(feats)} features...")
+        print("There are %s features..." % len(feats))
 
         for col_name in tqdm(feats, desc='get_feats_desc'):
 
@@ -36,11 +51,9 @@ class NumericalFeature(object):
                 df = _func()
             else:
                 df = df.merge(_func(), 'left', group).fillna(0)
+
         return df
 
-        @staticmethod
-        def get_feats_poly():
-            """PolynomialFeatures"""
-            pass
+
 
 
