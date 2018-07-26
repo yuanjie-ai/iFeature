@@ -1,14 +1,13 @@
 import pandas as pd
-from tqdm import tqdm
 from sklearn.preprocessing import PolynomialFeatures
 
-class NumericalFeature(object):
 
+class NumericalFeature(object):
     def __init__(self):
         pass
 
     @staticmethod
-    def get_feats_poly(data, feats=None, degree=2, return_df=True):
+    def get_feats_poly(df, feats=None, degree=2, return_df=True):
         """PolynomialFeatures
         :param data: np.array or pd.DataFrame
         :param feats: columns names
@@ -16,44 +15,38 @@ class NumericalFeature(object):
         :return: df
         """
         poly = PolynomialFeatures(degree, include_bias=False)
-        data = poly.fit_transform(data[feats])
+        df = poly.fit_transform(df[feats])
 
         if return_df:
-            data = pd.DataFrame(data, columns=poly.get_feature_names(feats))
-        return data
+            df = pd.DataFrame(df, columns=poly.get_feature_names(feats))
+        return df
 
     @staticmethod
-    def get_feats_desc(data, group='ID', feats=None):
+    def get_feats_agg_desc(df, group_col, agg_col):
         """data未聚合
         时间特征差分后当数值型特征
         """
-        print("There are %s features..." % len(feats))
+        print("There are %s agg feats..." % len(agg_col))
 
-        for col_name in tqdm(feats, desc='get_feats_desc'):
+        def q1(x):
+            print('Compute %s ...' % x.name)
+            return x.quantile(0.25)
 
-            _columns = {i: col_name + '_' + i for i in ['count', 'mean', 'std', 'var', 'min', 'q1', 'median', 'q3', 'max']}
-            gr = data.groupby(group)[col_name]
+        def q3(x): return x.quantile(0.75)
 
-            def _func():
-                # df = gr.describe().reset_index()
-                df = gr.agg(['count', 'mean', 'std', 'var', 'min', 'median', 'max']).reset_index()
-                df['q1'] = gr.apply(lambda x: x.quantile(0.25)).values
-                df['q3'] = gr.apply(lambda x: x.quantile(0.75)).values
-                df[col_name + '_' + 'max_min'] = df['max'] - df['min']
-                df[col_name + '_' + 'q3_q1'] = df['q3'] - df['q1']
-                df[col_name + '_' + 'kurt'] = gr.apply(pd.Series.kurt).values
-                df[col_name + '_' + 'skew'] = gr.skew().values
-                df[col_name + '_' + 'sem'] = gr.sem().values
-                df[col_name + '_' + 'sum'] = gr.sum().values
-                return df.rename(columns=_columns)
+        def kurt(x): return x.kurt()
 
-            if col_name == feats[0]:
-                df = _func()
-            else:
-                df = df.merge(_func(), 'left', group).fillna(0)
+        def max_min(x): return x.max() - x.max()
 
-        return df
+        def q3_q1(x): return x.quantile(0.75) - x.quantile(0.25)
 
+        def cv(x): return x.std() / (x.mean() + 10 ** -8)  # 变异系数
 
+        def cv_reciprocal(x): return x.mean() / (x.std() + 10 ** -8)
 
+        funcs = ['count', 'min', q1, 'mean', 'median', q3, 'max', 'sum', 'std', 'var', 'sem', 'skew', kurt, q3_q1,
+                 max_min, cv, cv_reciprocal]
 
+        df = df.groupby(group_col)[agg_col].agg(funcs)
+        df.columns = ['_'.join(i) for i in df.columns]
+        return df.reset_index()
