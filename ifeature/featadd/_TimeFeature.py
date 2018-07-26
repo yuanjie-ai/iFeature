@@ -11,9 +11,9 @@ class TimeFeature(object):
         pass
 
     @staticmethod
-    def get_feats_time(df, group_col=None, time_col='CREATETIME', feat_cols=None):
+    def get_feats_time(df, group_col=None, time_col=None, feat_cols=None):
         """
-        :param df:
+        :param df: 
         :param group_col:
         :param time_col:
         :param feat_cols:
