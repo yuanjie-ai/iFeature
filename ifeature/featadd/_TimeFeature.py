@@ -4,7 +4,6 @@ __title__ = '_TimeFeature'
 __author__ = 'JieYuan'
 __mtime__ = '2018/7/22'
 """
-from tqdm import tqdm
 
 
 class TimeFeature(object):
@@ -12,30 +11,28 @@ class TimeFeature(object):
         pass
 
     @staticmethod
-    def get_feats_time(data, group=None, feats=['numerical', ], ts='ts'):
-        """时间的聚合特征同数值型
-        与时间相关特征的特征衍生的非聚合特征
+    def get_feats_time(data, group_col=None, time_col='CREATETIME', feat_cols=None):
+        """
         :param data:
-        :param group: "id"
-        :param feats:
-        :param ts:
+        :param group_col:
+        :param time_col:
+        :param feat_cols:
         :return:
         """
         print('time continuous ...')
-        data['ts_year'] = data[ts].apply(lambda x: x.year)
-        data['ts_month'] = data[ts].apply(lambda x: x.month)
-        data['ts_day'] = data[ts].apply(lambda x: x.day)
-        data['ts_weekday'] = data[ts].apply(lambda x: x.weekday())
-        data['ts_diff'] = data.groupby(group)[ts].diff().apply(lambda x: x.days).fillna(0)  ##########
-        data['ts_time_interval'] = data[ts].agg(lambda x: x.max() - x).apply(lambda x: x.days)
-        if feats:  # 对时间特征可用数值特征平均编码
-            print("ts_average_encoding ...")
-            gr = data.groupby(ts)
-            for i in tqdm(feats):
-                data['ts_average_encoding_' + i] = gr[i].transform('mean')  # median
+        data[time_col + '_year'] = data[time_col].apply(lambda x: x.year)
+        data[time_col + '_month'] = data[time_col].apply(lambda x: x.month)
+        data[time_col + '_day'] = data[time_col].apply(lambda x: x.day)
+        data[time_col + '_weekday'] = data[time_col].apply(lambda x: x.weekday())
+        data[time_col + '_diff'] = data.groupby(group_col)[time_col].diff().apply(lambda x: x.days).fillna(0)
+        data[time_col + '_time_interval'] = data[time_col].transform(lambda x: x.max() - x).apply(lambda x: x.days)
 
-            print("feats diff ...")
-            gr = data.groupby(group)
-            for i in tqdm(feats):  # 数值特征也可以按时间顺序进行差分
-                data['diff_' + i] = gr[i].diff().fillna(0)
+        if feat_cols:
+            print("Feats Diff ...")
+            _data = data.groupby(group_col)[feat_cols].diff().fillna(0) \
+                .rename(columns={i + '_diff': i for i in feat_cols})  # 提前按时间升序排列
+
+            print("Feats Average Encoding ...")
+            _data = data.groupby(time_col)[feat_cols].transform('mean') \
+                .rename(columns={i + '_diff': i for i in feat_cols})  # median
         return data
