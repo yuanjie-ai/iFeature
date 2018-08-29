@@ -1,5 +1,10 @@
 ## 特征工程
 
+### Install
+```bash
+pip install git+https://github.com/Jie-Yuan/iFeature.git
+```
+
 ```bash
 ssh-keygen -t rsa -C "313303303@qq.com" #一路回车
 
