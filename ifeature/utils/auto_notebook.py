@@ -22,6 +22,9 @@ else:
 def mytqdm(desc=None):
     def wrapper(func):
         """
+	pip install ipywidgets
+	jupyter nbextension enable --py widgetsnbextension
+
         @mytqdm('Example ...')
         def func(x):
             for i in x:
