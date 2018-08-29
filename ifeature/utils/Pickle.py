@@ -7,7 +7,7 @@ __mtime__ = '2018/7/24'
 
 import pickle
 
-from ..utils_common.decorator import execution_time
+from ..utils.decorator import execution_time
 
 
 class Pickle(object):
