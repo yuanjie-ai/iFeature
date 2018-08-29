@@ -5,4 +5,6 @@ __author__ = 'JieYuan'
 __mtime__ = '2018/7/20'
 """
 
+
+from .DataCreate import DataCreate
 from .Pickle import Pickle
