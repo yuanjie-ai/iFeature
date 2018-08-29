@@ -5,7 +5,6 @@ __author__ = 'JieYuan'
 __mtime__ = '2018/7/23'
 """
 
-
 """特征工程
 特征最好不要超过1000
 根据熵、距离、概率（比率）构造特征。
@@ -13,8 +12,8 @@ __mtime__ = '2018/7/23'
     聚类特征
 """
 
-from .RowFeature import RowFeature
-from .NumericalFeature import NumericalFeature
+from .Binning import Binning
 from .CategoryFeature import CategoryFeature
+from .NumericalFeature import NumericalFeature
+from .RowFeature import RowFeature
 from .TimeFeature import TimeFeature
-

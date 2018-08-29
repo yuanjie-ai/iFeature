@@ -8,7 +8,7 @@ __mtime__ = '2018/7/26'
 """
 __doc__ == 'Automatically created module for IPython interactive environment'
 """
-from ..utils_common.decorator import execution_time
+from ..utils.decorator import execution_time
 
 
 class NumericalFeature(object):

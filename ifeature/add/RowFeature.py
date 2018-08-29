@@ -8,8 +8,8 @@ import pandas as pd
 from sklearn.preprocessing import PolynomialFeatures
 from tqdm import tqdm
 
-from ..utils_common.decorator import execution_time
-from ..utils_common.parallel import PandasParallel
+from ..utils.decorator import execution_time
+from ..utils.parallel import PandasParallel
 
 
 def func(x):

@@ -1,4 +1,4 @@
-## ç‰¹å¾å·¥ç¨‹
+## ÌØÕ÷¹¤³Ì
 
 ### Install
 ```bash
@@ -6,9 +6,9 @@ pip install git+https://github.com/Jie-Yuan/iFeature.git
 ```
 
 ```bash
-ssh-keygen -t rsa -C "313303303@qq.com" #ä¸€è·¯å›è½¦
+ssh-keygen -t rsa -C "313303303@qq.com" #Ò»Â·»Ø³µ
 
-head ~/.ssh/id_rsa.pub # å¤åˆ¶æ·»åŠ è‡³Github SSH keys
+head ~/.ssh/id_rsa.pub # ¸´ÖÆÌí¼ÓÖÁGithub SSH keys
 
 git config --global color.ui true
 git config --global user.name "Jie-Yuan"

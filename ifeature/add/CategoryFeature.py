@@ -6,7 +6,7 @@ __mtime__ = '2018/7/20'
 """
 from sklearn.feature_extraction import text
 
-from ..utils_common.decorator import execution_time
+from ..utils.decorator import execution_time
 
 
 class CategoryFeature(object):
