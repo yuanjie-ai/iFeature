@@ -5,17 +5,6 @@
 pip install git+https://github.com/Jie-Yuan/iFeature.git
 ```
 
-```bash
-ssh-keygen -t rsa -C "313303303@qq.com" #一路回车
-
-head ~/.ssh/id_rsa.pub # 复制添加至Github SSH keys
-
-git config --global color.ui true
-git config --global user.name "Jie-Yuan"
-git config --global user.email "313303303@qq.com"
-git config --list
-```
-
 ```
 _clf = LGBMClassifier(n_estimators=1)
 X = iris.data[:100, :]
