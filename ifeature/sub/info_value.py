@@ -11,6 +11,12 @@ class InformationValue(object):
         """
         :param df:
         :param label: target name
+        
+        < 0.02	    无预测能力
+        0.02 ~ 0.1	较弱的预测能力
+        0.1 ~ 0.3	预测能力一般
+        0.3 ~0.5	较强的预测能力
+        > 0.5	    可疑
         """
         assert label in df.columns
 
