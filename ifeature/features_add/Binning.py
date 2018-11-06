@@ -21,17 +21,18 @@ class Binning(object):
         self.feats = [col for col in df.columns if col != label]
         self.X = df[self.feats]
         self.y = df[label].values
+        assert len(len(self.y)) == 2
         self.node = {}
 
     def binning(self, return_X_y=True, n_jobs=16):
         with ThreadPoolExecutor(max_workers=n_jobs) as pool:
-            lst = pool.map(self.__binning, tqdm(self.feats, 'Binning ...'), chunksize=1)
+            lst = pool.map(self._binning, tqdm(self.feats, 'Binning ...'), chunksize=1)
         _data = np.column_stack(lst)
         if return_X_y:
             _data = pd.DataFrame(np.column_stack((_data, self.y)), columns=self.feats + [self.label])
         return _data
 
-    def __binning(self, feat):
+    def _binning(self, feat):
         """
         类别型合并分箱待补充 ...
         :param feat:

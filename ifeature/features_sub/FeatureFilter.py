@@ -21,7 +21,6 @@ from tqdm import tqdm
 """
 
 
-
 class FeatureFilter(object):
     """迭代
     高缺失率：
@@ -37,14 +36,21 @@ class FeatureFilter(object):
         self.feats = df.columns.tolist()
 
         # 属性
-        self.to_drop_missing = None
-        self.to_drop_unique = None
-        self.to_drop_variance = None
-        self.to_drop_correlation = None
-        self.to_drop_zero_importance = None
-        self.to_drop_low_importance = None
+        self.to_drop_missing = []
+        self.to_drop_unique = []
+        self.to_drop_variance = []
+        self.to_drop_correlation = []
+        self.corr_record = None
+        self.to_drop_zero_importance = []
+        self.to_drop_low_importance = []
 
-    def filter_missing(self, feat_cols=None, threshold=0.95):
+    def filter_missing(self, feat_cols=None, threshold=0.95, as_na=None):
+        """
+        :param feat_cols:
+        :param threshold:
+        :param as_na: 比如把-99当成缺失值
+        :return:
+        """
 
         if feat_cols is None:
             feat_cols = self.feats
@@ -54,7 +60,8 @@ class FeatureFilter(object):
 
         # Sort with highest number of missing values on top
         # .sort_values('missing_fraction', ascending=False)
-        missing_stats = (self.df.isnull().sum() / self.df.shape[0]) \
+        s = (self.df == as_na).sum() if as_na else self.df.isnull().sum()
+        missing_stats = (s / self.df.shape[0]) \
             .reset_index() \
             .rename(columns={'index': 'feature', 0: 'missing_fraction'})
 
@@ -113,7 +120,7 @@ class FeatureFilter(object):
         corr_matrix = self.df[feat_cols].corr().abs()
 
         # Extract the upper triangle of the correlation matrix
-        upper = pd.DataFrame(np.triu(corr_matrix, 1), columns=feat_cols)
+        upper = pd.DataFrame(np.triu(corr_matrix, 1), feat_cols, feat_cols)
 
         # Select the features with correlations above the threshold
         # Need to use the absolute value
@@ -121,4 +128,22 @@ class FeatureFilter(object):
 
         self.to_drop_correlation = to_drop
 
+        # Dataframe to hold correlated pairs
+        # Iterate through the columns to drop to record pairs of correlated features
+        corr_record = pd.DataFrame()
+        for column in tqdm(to_drop, 'Correlation DataFrame'):
+            cond = upper[column] > threshold
+            corr_features = list(upper.index[cond])  # Find the correlated features
+            corr_values = list(upper[column][cond])  # Find the correlated values
+            drop_features = [column for _ in range(len(corr_features))]
+            df_tmp = pd.DataFrame({'drop_feature': drop_features,
+                                   'corr_feature': corr_features,
+                                   'corr_value': corr_values})
+            corr_record = corr_record.append(df_tmp, ignore_index=True, sort=False)
+
+        self.corr_record = corr_record
         print('%d features with a  correlation coefficient greater than %0.2f.\n' % (len(to_drop), threshold))
+
+    @property
+    def to_drop_all(self):
+        return self.to_drop_missing + self.to_drop_unique + self.to_drop_variance + self.to_drop_correlation + self.to_drop_zero_importance + self.to_drop_low_importance

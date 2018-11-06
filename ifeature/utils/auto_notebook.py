@@ -21,15 +21,6 @@ else:
 
 def mytqdm(desc=None):
     def wrapper(func):
-        """
-	pip install ipywidgets
-	jupyter nbextension enable --py widgetsnbextension
-
-        @mytqdm('Example ...')
-        def func(x):
-            for i in x:
-                pass
-        """
         @functools.wraps(func)
         def _wrapper(iter_obj, *args, **kwargs):
             """保证第一个参数为可迭代参数即可"""
@@ -41,5 +32,4 @@ def mytqdm(desc=None):
         return _wrapper
 
     return wrapper
-
 

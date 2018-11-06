@@ -16,7 +16,7 @@ __all__ = [
 class CountEncoder(object):
 
     def __repr__(self):
-        return 'ifeature.featadd.CountEncoder'
+        return 'ifeature.add.CountEncoder'
 
     def fit(self, df: pd.Series):
         self.counter = df.value_counts(sort=False).reset_index(name=df.name + '_counter')

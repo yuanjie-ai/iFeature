@@ -161,48 +161,27 @@ class FeatureSelector():
 
         print('%d features with a single unique value.\n' % len(self.ops['single_unique']))
 
-    def identify_collinear(self, correlation_threshold, one_hot=False):
+    def identify_collinear(self, feat_cols=None, threshold=0.98):
         """
         Finds collinear features based on the correlation coefficient between features.
         For each pair of features with a correlation coefficient greather than `correlation_threshold`,
         only one of the pair is identified for removal.
-        Using code adapted from: https://chrisalbon.com/machine_learning/feature_selection/drop_highly_correlated_features/
-
-        Parameters
-        --------
-        correlation_threshold : float between 0 and 1
-            Value of the Pearson correlation cofficient for identifying correlation features
-        one_hot : boolean, default = False
-            Whether to one-hot encode the features before calculating the correlation coefficients
+        Using code adapted from: https://chrisalbon.com/machine_learning/feature_selection/drop_highly_correlated_features
         """
 
-        self.correlation_threshold = correlation_threshold
-        self.one_hot_correlated = one_hot
+        if feat_cols is None:
+            feat_cols = self.feats
 
-        # Calculate the correlations between every column
-        if one_hot:
-
-            # One hot encoding
-            features = pd.get_dummies(self.data)
-            self.one_hot_features = [column for column in features.columns if column not in self.base_features]
-
-            # Add one hot encoded data to original data
-            self.data_all = pd.concat([features[self.one_hot_features], self.data], axis=1)
-
-            corr_matrix = pd.get_dummies(features).corr()
-
-        else:
-            print('Compute Corr Matrix ...')
-            corr_matrix = self.data.corr()
-
-        self.corr_matrix = corr_matrix
+        print('Compute Corr Matrix ...')
+        corr_matrix = self.df[feat_cols].corr().abs()
 
         # Extract the upper triangle of the correlation matrix
-        upper = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(np.bool))
+        upper = pd.DataFrame(np.triu(corr_matrix, 1), columns=feat_cols)
 
         # Select the features with correlations above the threshold
+
         # Need to use the absolute value
-        to_drop = [column for column in upper.columns if any(upper[column].abs() > correlation_threshold)]
+        to_drop = [column for column in upper.columns if any(upper[column].abs() > threshold)]
 
         # Dataframe to hold correlated pairs
         record_collinear = pd.DataFrame(columns=['drop_feature', 'corr_feature', 'corr_value'])
@@ -210,10 +189,10 @@ class FeatureSelector():
         # Iterate through the columns to drop to record pairs of correlated features
         for column in tqdm(to_drop, 'correlated features'):
             # Find the correlated features
-            corr_features = list(upper.index[upper[column].abs() > correlation_threshold])
+            corr_features = list(upper.index[upper[column].abs() > threshold])
 
             # Find the correlated values
-            corr_values = list(upper[column][upper[column].abs() > correlation_threshold])
+            corr_values = list(upper[column][upper[column].abs() > threshold])
             drop_features = [column for _ in range(len(corr_features))]
 
             # Record the information (need a temp df for now)

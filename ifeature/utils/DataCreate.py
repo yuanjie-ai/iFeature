@@ -8,7 +8,7 @@ __mtime__ = '2018/8/29'
 import pandas as pd
 from sklearn.datasets import load_iris, make_classification
 
-class Data(object):
+class DataCreate(object):
     def __init__(self):
         pass
 

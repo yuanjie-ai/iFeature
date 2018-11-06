@@ -12,7 +12,7 @@ with open("README.md", encoding='utf-8') as f:
 
 setup(
     name='ifeature',
-    version='0.0.1',
+    version='0.0.5',
     url='https://github.com/Jie-Yuan/iFeature',
     keywords=["DeepLearning", "313303303@qq.com"],
     description=('description'),

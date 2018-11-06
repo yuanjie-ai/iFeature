@@ -139,17 +139,18 @@ def execution_time(wrapped, instance, args, kwargs):
             print('Decorator was applied to an instancemethod.')
             return call()
 
-##################################################################################
-class Singleton(object):
-    """单例"""
 
+##################################################################################
+class Singleton:
     def __init__(self, cls):
         self.cls = cls
-        self._instance = None
+        self.instance = None
 
     def __call__(self, *args, **kwargs):
-        if self._instance is not None:
-            self._instance = self.cls(*args, **kwargs)
+        if self.instance is None:
+            self.instance = self.cls(*args, **kwargs)
+        return self.instance
+
 
 
 def singleton(cls):

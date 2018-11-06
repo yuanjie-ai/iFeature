@@ -11,12 +11,6 @@ class InformationValue(object):
         """
         :param df:
         :param label: target name
-        
-        < 0.02	    无预测能力
-        0.02 ~ 0.1	较弱的预测能力
-        0.1 ~ 0.3	预测能力一般
-        0.3 ~0.5	较强的预测能力
-        > 0.5	    可疑
         """
         assert label in df.columns
 
@@ -29,11 +23,11 @@ class InformationValue(object):
 
     def iv(self, order=True, n_jobs=16):
         with ThreadPoolExecutor(max_workers=n_jobs) as pool:
-            ivs = pool.map(self.__iv, tqdm(self.feats, 'Calculating ...'), chunksize=1)
+            ivs = pool.map(self._iv, tqdm(self.feats, 'Calculating ...'), chunksize=1)
         z = zip(ivs, self.feats)
         return pd.DataFrame(sorted(z, reverse=True) if order else list(z), columns=['iv', 'feats'])
 
-    def __iv(self, feat):
+    def _iv(self, feat):
         gr = self.df.groupby(feat)
         gr1, gr0 = gr[self.label].sum().values + 1e-8, gr['_label'].sum().values + 1e-8
         good, bad = gr1 / self.y1, gr0 / self.y0
